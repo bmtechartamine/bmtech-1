@@ -2,7 +2,8 @@
 name: reverse-engineer-anything
 description: Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decompile code, or guide a reconstruction. Skip REA for ordinary source-repository architecture analysis.
 metadata:
-  version: "44"
+  version: "42"
+  tool_count: 207
 ---
 
 # REA
@@ -30,12 +31,10 @@ unavailable, read [connection and recovery](references/connection-and-recovery.m
 Diagnose the observed blocker, continue useful supported work, and resume the
 original task after repair. Client approval, shell PATH, registration and engine
 availability have different remedies; avoid repeating setup for all of them.
-If the host times out without a REA result, do not repeat the unchanged call or
-assume work stopped. Read the recovery guide's deadline distinction before retrying.
 
 1. Diagnose without changing REA or client configuration. `npx` may download
    the package and write to npm's cache. For Codex, run
-   `npx -y rea-agents@latest doctor --client codex --json`. Substitute the current
+   `npx -y rea-agents@6.7.0 doctor --client codex --json`. Substitute the current
    supported client: `claude_code`, `claude_desktop`, `codex`, `cursor`,
    `gemini_cli`, `windsurf`, `devin`, `opencode`, `antigravity`, `copilot_cli`,
    `commandcode`, `vscode`, `grok_build`, `omp`, or `grok_bot`. `grok_bot` has no local
@@ -49,12 +48,12 @@ assume work stopped. Read the recovery guide's deadline distinction before retry
    that provider: static JavaScript inspection needs neither Hopper nor Ghidra,
    and Android inspection has separate bring-your-own JADX/Java prerequisites.
 3. For a configuration repair, prepare the read-only plan:
-   `npx -y rea-agents@latest setup --client codex --dry-run --json`.
+   `npx -y rea-agents@6.7.0 setup --client codex --dry-run --json`.
    Use the current client's ID, show its exact proposed paths, backups, and
    changes, and obtain approval before setup writes configuration or installs
    Hopper. Setup normally installs the matching bundled skill too; include that
    replacement in the reviewed plan. After approval, apply the same scope with
-   `npx -y rea-agents@latest setup --client codex --yes`. Add `--install-hopper`
+   `npx -y rea-agents@6.7.0 setup --client codex --yes`. Add `--install-hopper`
    only if that separate installation was needed and explicitly approved.
 4. Restart/reconnect the affected agent. Verify that REA tools actually appear
    in the session, then resume the original investigation. If they remain
@@ -69,7 +68,7 @@ with a version-pinned `rea-agents` package or continue through the CLI.
 A concrete CLI fallback for an operator-supplied JavaScript tree or ASAR is:
 
 ```bash
-npx -y rea-agents@latest analyze-javascript-application /absolute/path/to/app --json
+npx -y rea-agents@6.7.0 analyze-javascript-application /absolute/path/to/app --json
 ```
 
 No MCP registration or native engine is required. Read the returned Evidence,
@@ -77,7 +76,7 @@ graph, limitations, and unknowns with the same care as an MCP result; the CLI
 returns the Evidence record directly. This fallback does not establish that
 MCP is configured. Native CLI tasks still require their selected engine.
 Prefer an existing `rea` CLI. When none is installed and REA package acquisition
-is within the authorized scope, use `npx -y rea-agents@latest` in its place.
+is within the authorized scope, use `npx -y rea-agents@6.7.0` in its place.
 Configuration repair starts with a read-only setup plan; show paths, backups and
 skill replacement before applying authorized changes. Preserve existing approval
 and target-execution boundaries. REA setup never installs or upgrades unrelated
@@ -91,19 +90,9 @@ explicit path or endpoint and do not need it.
 
 - ASAR or extracted JavaScript/Electron tree:
   `analyze_javascript_application`.
-- Archive/package member inventory (ZIP/APK/IPA/MSIX/AppX, DMG, or a PyInstaller
-  executable): `open_binary` with the supplied local path; use `inspect_artifact`
-  when its graph and findings help answer the question. A PyInstaller CArchive
-  is the application layer; the bootloader is only the native prefix. Start with
-  `detail: "summary"` for large inventories, then use retained inventory views
-  for selected member fields/pages. A complete small inventory can cost less
-  than extra calls and schemas. Runtime options are metadata, not files.
-  Compact delivery still inventories and hashes members. See the
-  [Python packaged applications guide](https://github.com/morluto/rea/blob/main/docs/python-packaged-applications.md).
-- Apple app plist, Interface Builder, asset catalog, or keyed archive resources:
-  `open_bundle_resources`, then the selected resource tool. This does not
-  require `CFBundleExecutable` or a deep provider. Resource sessions have no
-  executable digest or binary snapshot; use `open_binary` for native code.
+- Archive/package member inventory (ZIP/APK/IPA/MSIX/AppX or DMG):
+  `open_binary` with the supplied local path; use `inspect_artifact` when its
+  graph and findings help answer the question.
 - Android APK code, classes, methods, or incoming references:
   `inspect_android_package`, then focused Android tools when advertised.
   Archive member inventory still uses the archive route above.
@@ -181,38 +170,12 @@ explicit path or endpoint and do not need it.
   absent metadata does not prove a binary is not Go, and unparsed text records
   remain explicit. See the
   [Go binary guide](https://github.com/morluto/rea/blob/main/docs/go-binaries.md).
-- Bundled GGUF or safetensors model declarations: `inspect_model_artifact`
-  with the explicit local file. Default header hashing leaves full-file identity
-  unknown; `hash: "full"` additionally reads all weights for SHA-256. MCP returns
-  retained summaries; optional `view` selects one page in the initial call. Use
-  `inspect_analysis_view` kind `model-artifact` for
-  batched metadata keys, tensor names or type totals, selected fields and pages.
-  Preserve header-scoped indices and array preview omissions; do not infer model
-  behavior from declared architecture or tensor types. See the
-  [model file guide](https://github.com/morluto/rea/blob/main/docs/model-artifacts.md).
-- Unity IL2CPP names, member owners and string literals from `global-metadata.dat`:
-  `inspect_il2cpp_metadata` with the explicit local file; MCP defaults to compact
-  counts. Query sections, images, types, methods, fields, properties, events,
-  parameters or string_literals through `inspect_analysis_view`
-  with the returned `parent_evidence_id`, using exact filters, batch indices and
-  selected fields. Parameters accept `method_indices`, avoiding a scan of all
-  parameter pages. Missing collections in historical Evidence remain unknown.
-  Versions 24, 27, 29, 31 and 39; no Unity, IL2CPP
-  binary or disassembler is run. Unrecognized magic (possibly encrypted) and
-  other versions are unsupported. Optional matching `binary_path` enables static native addresses and type references; query `method_addresses` with indices or addresses/states, preserving every shared-body method and both artifact identities. Without a linked binary native counts remain unknown. Byte-pattern fallback is inferred; no runtime behavior or same-build pairing is proved. See the
-  [IL2CPP metadata guide](https://github.com/morluto/rea/blob/main/docs/il2cpp-metadata.md).
 - Embedded cargo-auditable Rust dependency metadata: `inspect_rust_binary`
   with the explicit local ELF, PE, or thin Mach-O file. This built-in
   target-free inspection requires no Rust installation or disassembler. Preserve
   package order, dependency indices, and the section file range. A missing
   `.dep-v0` section is null metadata, not proof the binary has no dependencies.
   A rustc commit hash is an inference from a read-only `/rustc/<40-hex>/` path.
-  For selected crates, use `view: {collection: "packages", names: [...],
-  fields: ["name", "version", "source"]}` on the first call; explicitly include
-  `dependencies` for direct index references. Use `detail: "summary"` for counts
-  and ranges, or retained `inspect_analysis_view` Rust package/edge pages for
-  subsequent filters. Keep the complete parent Evidence accessible; CLI compact
-  delivery requires `--evidence_output`.
   See the
   [Rust binary guide](https://github.com/morluto/rea/blob/main/docs/rust-binaries.md).
 
@@ -284,12 +247,6 @@ is the complete tool inventory; use `tools/list` for canonical tool schemas.
 Provider candidate facts describe possible providers, while top-level session
 capabilities describe the current route and `analysis_provider_binding` names the
 selected provider. Do not treat those scopes as interchangeable.
-
-For a Ghidra startup timeout on a large native target, follow
-[deadline recovery](references/native-and-artifacts.md#ghidra-startup-deadline-recovery)
-before abandoning deep analysis or repeating the same cold import. The default
-330 seconds is configurable; changing the server's environment requires a new
-REA process.
 
 ## Work summary-first
 
