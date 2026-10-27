@@ -1,37 +1,37 @@
 feature,area,priority,original,clone,notes
-Créer un compte (e-mail et Google),compte,must,yes,no,
-Liste de mes projets avec vignettes,projets,must,yes,no,état vide pour le premier projet
-Créer renommer dupliquer supprimer un projet,projets,must,yes,no,
-Tracer une pièce à partir d'une forme de base,éditeur 2D,must,yes,no,
-Tracer des murs qui s'accrochent entre eux,éditeur 2D,must,yes,no,partie la plus difficile
-Cotes affichées et modifiables sur murs et pièces,éditeur 2D,must,yes,no,un mur seul ou toute la pièce (source 1)
-Surface de chaque pièce calculée,éditeur 2D,must,yes,no,
-Ajouter portes et fenêtres dans un mur,éditeur 2D,must,yes,no,
-Annuler et rétablir,éditeur 2D,must,yes,no,
-Basculer entre 2D et 3D,éditeur 3D,must,yes,no,
-Vue 3D avec orbite zoom et déplacement,éditeur 3D,must,yes,no,
-Catalogue de meubles par catégories avec recherche,catalogue,must,yes,no,catalogue à construire nous-mêmes (CC0 ou commandé)
-Glisser-déposer un meuble dans le plan ou la 3D,catalogue,must,yes,no,
-Déplacer pivoter supprimer un objet,éditeur 2D,must,yes,no,
-Enregistrement automatique du projet,projets,must,yes,no,
-Unités métriques et impériales,réglages,must,yes,no,
-Redimensionner un meuble,catalogue,should,yes,no,premium chez Planner 5D
-Matériaux et couleurs des sols et des murs,matériaux,should,yes,no,textures à créer ou CC0
-Matériaux et couleurs des meubles,matériaux,should,yes,no,
-Plusieurs étages (jusqu'à 6),étages,should,yes,no,
-Partager un projet par lien en lecture seule,partage,should,yes,no,premium chez Planner 5D
-Image de la vue 3D (capture simple),export,should,yes,no,capture côté navigateur; pas de rendu réaliste
-Export du plan 2D en PDF,export,should,yes,no,
-Formule gratuite et premium avec paiement,abonnement,should,yes,no,
-Objets premium verrouillés dans le catalogue,abonnement,should,yes,no,
-Interface en plusieurs langues,réglages,should,yes,no,FR et EN au minimum; plainte des utilisateurs sur la traduction
-Utilisable sur mobile (navigateur),éditeur 2D,should,yes,no,
+Créer un compte (e-mail et Google),compte,must,yes,no,v2 avec serveur : /replica-backend
+Liste de mes projets avec vignettes,projets,must,yes,yes,état vide pour le premier projet
+Créer renommer dupliquer supprimer un projet,projets,must,yes,yes,
+Tracer une pièce à partir d'une forme de base,éditeur 2D,must,yes,yes,"rectangle glissé, polygone cliqué, modèles studio et T3"
+Tracer des murs qui s'accrochent entre eux,éditeur 2D,must,yes,yes,"partie la plus difficile; accroche aux coins, aux murs, aux axes et à la grille de 5 cm"
+Cotes affichées et modifiables sur murs et pièces,éditeur 2D,must,yes,yes,un mur seul ou toute la pièce (source 1); longueur de mur éditable; coins déplaçables
+Surface de chaque pièce calculée,éditeur 2D,must,yes,yes,
+Ajouter portes et fenêtres dans un mur,éditeur 2D,must,yes,yes,8 modèles; glisser le long du mur
+Annuler et rétablir,éditeur 2D,must,yes,yes,100 étapes
+Basculer entre 2D et 3D,éditeur 3D,must,yes,yes,
+Vue 3D avec orbite zoom et déplacement,éditeur 3D,must,yes,yes,
+Catalogue de meubles par catégories avec recherche,catalogue,must,yes,partial,catalogue à construire nous-mêmes (CC0 ou commandé); 36 objets générés par le code contre 5000+ chez l'original
+Glisser-déposer un meuble dans le plan ou la 3D,catalogue,must,yes,yes,dans le plan 2D et dans la vue 3D
+Déplacer pivoter supprimer un objet,éditeur 2D,must,yes,yes,"poignée de rotation, flèches du clavier"
+Enregistrement automatique du projet,projets,must,yes,yes,dans le navigateur (pas encore sur un serveur)
+Unités métriques et impériales,réglages,must,yes,yes,
+Redimensionner un meuble,catalogue,should,yes,yes,premium chez Planner 5D; gratuit ici
+Matériaux et couleurs des sols et des murs,matériaux,should,yes,partial,textures à créer ou CC0; couleurs seulement; pas encore de textures
+Matériaux et couleurs des meubles,matériaux,should,yes,partial,couleur seulement
+Plusieurs étages (jusqu'à 6),étages,should,yes,yes,
+Partager un projet par lien en lecture seule,partage,should,yes,yes,premium chez Planner 5D; projet contenu dans le lien; gratuit ici
+Image de la vue 3D (capture simple),export,should,yes,yes,capture côté navigateur; pas de rendu réaliste
+Export du plan 2D en PDF,export,should,yes,yes,PNG et impression / PDF par le navigateur
+Formule gratuite et premium avec paiement,abonnement,should,yes,no,v2 avec Stripe
+Objets premium verrouillés dans le catalogue,abonnement,should,yes,no,v2
+Interface en plusieurs langues,réglages,should,yes,yes,FR et EN au minimum; plainte des utilisateurs sur la traduction; français et anglais
+Utilisable sur mobile (navigateur),éditeur 2D,should,yes,yes,"toucher, pincer pour zoomer"
 Visite à la première personne,éditeur 3D,could,yes,no,à confirmer sur l'appli
-Escaliers entre étages,étages,could,yes,no,
-Toit et terrain extérieur,éditeur 3D,could,yes,no,
-Dupliquer un objet ou une pièce,éditeur 2D,could,yes,no,
-Modèles de pièces prêtes à l'emploi,projets,could,yes,no,
-Travail hors ligne,projets,could,yes,no,mis en avant sur l'App Store
+Escaliers entre étages,étages,could,yes,partial,objet escalier; pas de trémie dans le plancher
+Toit et terrain extérieur,éditeur 3D,could,yes,no,sol extérieur uni seulement
+Dupliquer un objet ou une pièce,éditeur 2D,could,yes,partial,objets oui (Ctrl+D); pièces non
+Modèles de pièces prêtes à l'emploi,projets,could,yes,yes,studio et T3
+Travail hors ligne,projets,could,yes,partial,"mis en avant sur l'App Store; tout est local, mais pas encore installable hors ligne"
 Formule pro (rendus illimités et portfolio),abonnement,could,yes,no,
 Leur catalogue d'objets 3D et leurs textures,catalogue,must,yes,skip,contenu sous licence qui leur appartient; on construit le nôtre
 Galerie communautaire de projets,communauté,could,yes,skip,leur réseau et leurs utilisateurs
