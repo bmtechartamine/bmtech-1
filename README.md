@@ -10,10 +10,14 @@ Il n'y a aucun abonnement à payer.
 
 | Onglet | Ce que ça fait |
 |---|---|
-| 🔍 **Recherche produits** | Recherche par mot-clé ou par ASIN. Affiche le prix, le BSR, la catégorie, le nombre de vendeurs (dont FBA), si Amazon vend lui-même, et les **ventes et le CA mensuels estimés**. Donne aussi un résumé du marché. |
-| 📈 **Suivi concurrents** | Suit des ASIN dans le temps : historique du BSR, du prix et des vendeurs, et **ventes estimées par jour**. |
-| 🧮 **Calculateur de marge** | Frais Amazon réels (FBA ou FBM) via l'API, TVA, coût produit, transport, pub → bénéfice, marge, ROI, et budget pub maximum par vente. |
-| 🎯 **Calibration** | Tu entres les ventes réelles de tes propres produits. L'outil corrige alors toutes ses estimations. |
+| 🔍 **Recherche produits** | Recherche par mot-clé ou ASIN (jusqu'à 60 produits) : prix, BSR, vendeurs, présence d'Amazon, **ventes et CA mensuels estimés**. Filtres (prix, BSR, ventes, vendeurs, sans Amazon), **score d'opportunité sur 10**, **parts de marché par marque**, mots-clés des concurrents et export CSV pour Excel. |
+| 🌍 **Comparateur Europe** | Un ASIN sur les 6 marketplaces en un clic : où il se vend le mieux, et les pays où il est **absent** (opportunités). |
+| 📈 **Suivi concurrents** | Historique du BSR, du prix et des vendeurs, ventes estimées par jour, **tendance sur 7 jours** et export CSV. |
+| 🔔 **Alertes** | Créées automatiquement : changement de prix, rupture de stock, nouveau vendeur, arrivée ou départ d'Amazon. |
+| 🔑 **Mots-clés** | Ce que les clients tapent vraiment dans la recherche Amazon, avec un score de popularité. |
+| ✍️ **Optimiseur de fiche** | Vérifie ton titre, tes points clés et tes termes cachés selon les règles Amazon. Note sur 100 et mots-clés manquants. |
+| 🧮 **Calculateur de marge** | Frais Amazon réels (FBA ou FBM), prix Buy Box actuel, TVA, coûts, pub → bénéfice, marge, ROI, budget pub maximum et bénéfice mensuel. |
+| 🎯 **Calibration** | Tes ventes réelles corrigent toutes les estimations. |
 
 ### Comment les ventes des concurrents sont estimées
 
@@ -73,6 +77,10 @@ l'installer sur un petit serveur (environ 5 €/mois).
 
 ## Limites connues
 
+- Si ton navigateur propose de « traduire » la page, refuse : elle est déjà en français.
+- L'onglet Mots-clés utilise les suggestions de la barre de recherche Amazon. Ce service n'est pas officiel
+  et peut changer sans prévenir.
+
 - L'API officielle ne donne **pas** le nombre d'avis ni la note des produits.
 - Elle ne donne pas non plus le **volume de recherche des mots-clés**.
 - Une recherche par mot-clé renvoie 20 produits au maximum.
@@ -82,7 +90,7 @@ l'installer sur un petit serveur (environ 5 €/mois).
 ## Prochaines étapes possibles
 
 - Calibration automatique avec tes ventes (API Sales d'Amazon).
-- Alertes : changement de prix, rupture de stock ou nouveau vendeur chez un concurrent.
+- Alertes envoyées par e-mail ou sur Telegram.
 - Générateur de fiche produit (titre, points clés, mots-clés) par IA.
 - Extension Chrome affichant les estimations directement sur amazon.fr.
 

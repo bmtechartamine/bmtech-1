@@ -44,6 +44,15 @@ CREATE TABLE IF NOT EXISTS calibration (
     real_daily_sales REAL NOT NULL,
     created_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS alerts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    asin TEXT NOT NULL,
+    marketplace TEXT NOT NULL,
+    ts TEXT NOT NULL,
+    kind TEXT NOT NULL,
+    message TEXT NOT NULL,
+    seen INTEGER NOT NULL DEFAULT 0
+);
 """
 
 SNAPSHOT_FIELDS = (
@@ -82,6 +91,7 @@ def add_product(conn, asin: str, marketplace: str, info: dict) -> None:
 def remove_product(conn, asin: str, marketplace: str) -> None:
     conn.execute("DELETE FROM products WHERE asin = ? AND marketplace = ?", (asin, marketplace))
     conn.execute("DELETE FROM snapshots WHERE asin = ? AND marketplace = ?", (asin, marketplace))
+    conn.execute("DELETE FROM alerts WHERE asin = ? AND marketplace = ?", (asin, marketplace))
     conn.commit()
 
 
@@ -114,10 +124,16 @@ def get_snapshots(conn, asin: str, marketplace: str, since: str | None = None) -
 
 
 def latest_snapshot(conn, asin: str, marketplace: str) -> dict | None:
-    row = conn.execute(
-        "SELECT * FROM snapshots WHERE asin = ? AND marketplace = ? ORDER BY ts DESC LIMIT 1", (asin, marketplace)
-    ).fetchone()
-    return dict(row) if row else None
+    rows = last_snapshots(conn, asin, marketplace, 1)
+    return rows[0] if rows else None
+
+
+def last_snapshots(conn, asin: str, marketplace: str, n: int) -> list[dict]:
+    """Les n derniers relevés, du plus récent au plus ancien."""
+    rows = conn.execute(
+        "SELECT * FROM snapshots WHERE asin = ? AND marketplace = ? ORDER BY ts DESC, id DESC LIMIT ?", (asin, marketplace, n)
+    )
+    return [dict(r) for r in rows]
 
 
 def add_calibration(conn, asin: str, marketplace: str, display_group: str | None, bsr: int, real_daily_sales: float) -> None:
@@ -134,4 +150,30 @@ def list_calibration(conn) -> list[dict]:
 
 def delete_calibration(conn, point_id: int) -> None:
     conn.execute("DELETE FROM calibration WHERE id = ?", (point_id,))
+    conn.commit()
+
+
+def add_alert(conn, asin: str, marketplace: str, kind: str, message: str) -> None:
+    conn.execute(
+        "INSERT INTO alerts (asin, marketplace, ts, kind, message) VALUES (?, ?, ?, ?, ?)",
+        (asin, marketplace, now(), kind, message),
+    )
+    conn.commit()
+
+
+def list_alerts(conn, marketplace: str | None = None, limit: int = 200) -> list[dict]:
+    query = "SELECT a.*, p.title FROM alerts a LEFT JOIN products p ON p.asin = a.asin AND p.marketplace = a.marketplace"
+    params: list = []
+    if marketplace:
+        query += " WHERE a.marketplace = ?"
+        params.append(marketplace)
+    return [dict(r) for r in conn.execute(query + " ORDER BY a.ts DESC, a.id DESC LIMIT ?", (*params, limit))]
+
+
+def count_unseen_alerts(conn) -> int:
+    return conn.execute("SELECT COUNT(*) FROM alerts WHERE seen = 0").fetchone()[0]
+
+
+def mark_alerts_seen(conn) -> None:
+    conn.execute("UPDATE alerts SET seen = 1 WHERE seen = 0")
     conn.commit()

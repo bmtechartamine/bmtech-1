@@ -127,7 +127,7 @@ def test_db_roundtrip():
 
 
 class FakeClient:
-    def search_catalog(self, keywords, marketplace_id):
+    def search_catalog(self, keywords, marketplace_id, page_token=None):
         return {"items": [CATALOG_ITEM]}
 
     def get_catalog_item(self, asin, marketplace_id):

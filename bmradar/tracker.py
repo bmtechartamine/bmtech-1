@@ -8,7 +8,7 @@ from __future__ import annotations
 import argparse
 import time
 
-from . import db, parsers
+from . import alerts, db, parsers
 from .config import MARKETPLACES
 from .spapi import SPAPIClient, SPAPIError
 
@@ -33,6 +33,8 @@ def update_all(conn, client, marketplace: str | None = None, log=print) -> tuple
             info, snap = fetch_snapshot(client, asin, mp)
             db.add_product(conn, asin, mp, info)
             db.add_snapshot(conn, asin, mp, snap)
+            for _, message in alerts.check(conn, asin, mp):
+                log(f"ALERTE {mp} {asin} : {message}")
             ok += 1
             log(f"{mp} {asin} : BSR {snap.get('bsr')}, prix {snap.get('buybox_price')}")
         except SPAPIError as e:

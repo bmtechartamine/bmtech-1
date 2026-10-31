@@ -12,7 +12,7 @@ Deux méthodes complémentaires :
 from __future__ import annotations
 
 import math
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from .config import MARKETPLACES
 
@@ -111,3 +111,18 @@ def estimate_sales(history: list[tuple], display_group: str | None, marketplace:
     else:
         daily, method = model, "modèle BSR" + (" calibré" if calibration != 1.0 else "")
     return {"daily": daily, "monthly": daily * 30, "method": method, "model_daily": model, "drops_daily": drops_daily}
+
+
+def sales_trend(history: list[tuple], display_group: str | None, marketplace: str, calibration: float = 1.0,
+                days: int = 7) -> float | None:
+    """Évolution des ventes estimées : derniers `days` jours comparés aux `days` jours précédents (ex. +0.25 = +25 %)."""
+    points = sorted(((_parse_ts(t), b) for t, b in history if b), key=lambda p: p[0])
+    if not points or (points[-1][0] - points[0][0]).days < 2 * days - 1:
+        return None
+    cut = points[-1][0] - timedelta(days=days)
+    start = cut - timedelta(days=days)
+    recent = [(t, b) for t, b in points if t > cut]
+    before = [(t, b) for t, b in points if start < t <= cut]
+    a = estimate_sales(recent, display_group, marketplace, calibration)["daily"]
+    b = estimate_sales(before, display_group, marketplace, calibration)["daily"]
+    return (a - b) / b if b else None

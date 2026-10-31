@@ -89,26 +89,26 @@ class SPAPIClient:
             return resp.json()
         raise SPAPIError(f"Amazon ne répond pas (quota dépassé ou erreur serveur) sur {path}")
 
-    def get_catalog_item(self, asin: str, marketplace_id: str) -> dict:
+    def get_catalog_item(self, asin: str, marketplace_id: str | list[str]) -> dict:
+        """marketplace_id peut être une liste pour interroger plusieurs pays en un seul appel."""
+        ids = marketplace_id if isinstance(marketplace_id, str) else ",".join(marketplace_id)
         return self._request(
             "catalog",
             "GET",
             f"/catalog/2022-04-01/items/{asin}",
-            params={"marketplaceIds": marketplace_id, "includedData": "summaries,salesRanks,images"},
+            params={"marketplaceIds": ids, "includedData": "summaries,salesRanks,images"},
         )
 
-    def search_catalog(self, keywords: str, marketplace_id: str, page_size: int = 20) -> dict:
-        return self._request(
-            "catalog",
-            "GET",
-            "/catalog/2022-04-01/items",
-            params={
-                "marketplaceIds": marketplace_id,
-                "keywords": ",".join(keywords.split()),
-                "includedData": "summaries,salesRanks,images",
-                "pageSize": page_size,
-            },
-        )
+    def search_catalog(self, keywords: str, marketplace_id: str, page_size: int = 20, page_token: str | None = None) -> dict:
+        params = {
+            "marketplaceIds": marketplace_id,
+            "keywords": ",".join(keywords.split()),
+            "includedData": "summaries,salesRanks,images",
+            "pageSize": page_size,
+        }
+        if page_token:
+            params["pageToken"] = page_token
+        return self._request("catalog", "GET", "/catalog/2022-04-01/items", params=params)
 
     def get_item_offers(self, asin: str, marketplace_id: str) -> dict:
         return self._request(

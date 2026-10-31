@@ -2,18 +2,19 @@
 from __future__ import annotations
 
 
-def _for_marketplace(entries: list | None, marketplace_id: str) -> dict:
+def _for_marketplace(entries: list | None, marketplace_id: str, strict: bool = False) -> dict:
     entries = entries or []
     for entry in entries:
         if entry.get("marketplaceId") == marketplace_id:
             return entry
-    return entries[0] if entries else {}
+    return entries[0] if entries and not strict else {}
 
 
-def parse_catalog_item(item: dict, marketplace_id: str) -> dict:
-    summary = _for_marketplace(item.get("summaries"), marketplace_id)
-    ranks = _for_marketplace(item.get("salesRanks"), marketplace_id)
-    images = _for_marketplace(item.get("images"), marketplace_id).get("images") or []
+def parse_catalog_item(item: dict, marketplace_id: str, strict: bool = False) -> dict:
+    """strict=True : n'utilise que les données de cette marketplace (comparaison entre pays)."""
+    summary = _for_marketplace(item.get("summaries"), marketplace_id, strict)
+    ranks = _for_marketplace(item.get("salesRanks"), marketplace_id, strict)
+    images = _for_marketplace(item.get("images"), marketplace_id, strict).get("images") or []
 
     main = (ranks.get("displayGroupRanks") or [{}])[0]
     sub = (ranks.get("classificationRanks") or [{}])[0]
