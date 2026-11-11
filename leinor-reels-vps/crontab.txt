@@ -1,0 +1,5 @@
+# Fuseau horaire : le VPS doit être réglé sur Europe/Brussels (sudo timedatectl set-timezone Europe/Brussels)
+# Chaque dimanche à 20h05 : préparation des Reels de la semaine suivante
+5 20 * * 0 /root/leinor-reels-vps/run_weekly.sh
+# Chaque jour à 18h30 : publication des Reels prévus
+30 18 * * * cd /root/leinor-reels-vps && /usr/bin/python3 publish_meta.py >> logs/cron.log 2>&1
